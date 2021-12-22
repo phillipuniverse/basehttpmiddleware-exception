@@ -2,6 +2,11 @@ Demo project that shows how utilizing Starlette's `BaseHTTPMiddleware` causes ex
 
 The final manifestation is that a default error response from Starlette is returned rather than the error handler.
 
+[IMPORTANT]
+====
+This is resolved in Starlette 0.17.0 with https://github.com/encode/starlette/pull/1262[this PR]. This should be available in the next version of FastAPI > 0.17.0 https://github.com/tiangolo/fastapi/pull/4145[via this PR].
+====
+
 
 ## Reproduction
 
@@ -24,3 +29,4 @@ There is some [extra exception handling in AnyIO](https://github.com/agronholm/a
 . Use Python < 3.8
 . Do not use `BaseHTTPMiddleware`
 . Convert the endpoint to be a normal method, not `async`
+. Upgrade to FastAPI > 0.70.1 once https://github.com/tiangolo/fastapi/pull/4145[the fix PR] is merged.
