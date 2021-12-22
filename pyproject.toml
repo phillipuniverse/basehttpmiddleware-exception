@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "basehttpmiddleware_missedexception"
+version = "0.1.0"
+description = ""
+authors = ["Phillip Verheyden <pverheyden@gmail.com>"]
+license = "WTFPL"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.70.1"
+uvicorn = "^0.16.0"
+requests = "^2.26.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest_async = "^0.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+# Prevents pytest from buffering output until the end of a failed test
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+filterwarnings = [
+    "ignore:Using or importing the ABCs.*:DeprecationWarning", # Issue in the requests package, re-validate if requests changes past 0.12
+]
