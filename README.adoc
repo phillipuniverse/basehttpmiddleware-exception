@@ -1,0 +1,26 @@
+Demo project that shows how utilizing Starlette's `BaseHTTPMiddleware` causes exceptions to not be correctly re-raised back out to the ServerErrorMiddleware. Python 3.7 works fine, but Python 3.8 and 3.9 are broken.
+
+The final manifestation is that a default error response from Starlette is returned rather than the error handler.
+
+
+## Reproduction
+
+A few things that have to happen for this to manifest itself:
+
+. You must be using Python 3.8+
+. You must have some middleware installed that extends from `starlette.middleware.base.BaseHTTPMiddleware`
+. The request handler being hit must be an `async` method
+. FastAPI 0.70.1, Starlette 0.16.0
+
+
+## Details
+
+The issue stems from the `BaseHTTPMiddleware` https://github.com/encode/starlette/blob/d0252aaf052a97e7f09c19d9bfa46d1c9501e910/starlette/middleware/base.py#L38-L45[initializes a separate coroutine thread] before it does a `call_next`. The original exception ends up getting swallowed and an `anyio.EndOfStream` ends up being thrown from the endpoint.
+
+There is some [extra exception handling in AnyIO](https://github.com/agronholm/anyio/blob/098448bf17e202303a75700058d40ea6760d89fa/src/anyio/_backends/_asyncio.py#L673-L675) that allows this to not be an issue in Python < 3.8.
+
+## Workarounds
+
+. Use Python < 3.8
+. Do not use `BaseHTTPMiddleware`
+. Convert the endpoint to be a normal method, not `async`
